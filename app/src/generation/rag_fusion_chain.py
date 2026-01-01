@@ -1,0 +1,98 @@
+# app/src/generation/rag_fusion_chain.py
+from operator import itemgetter
+from typing import List
+from langchain.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI
+from langchain_core.output_parsers import StrOutputParser
+from langchain.load import dumps, loads
+from langchain.schema import Document
+
+from app.src.retrieval.hybrid_rag import HybridRAG
+
+
+class RAGFusionChain:
+    """
+    Implements a RAG-Fusion workflow with optional final answer generation.
+    - Generates multiple related queries from a single input
+    - Retrieves documents for each query using Hybrid RAG
+    - Fuses results using Reciprocal Rank Fusion
+    - Optionally generates a final summarized answer using an LLM
+    """
+
+    def __init__(self, rag: HybridRAG, llm_model: str = "gpt-4o-mini", temp: float = 0.0):
+        self.rag = rag
+        self.llm = ChatOpenAI(model_name=llm_model, temperature=temp)
+
+        # Prompt to generate multiple related queries
+        template_queries = """You are a helpful assistant that generates multiple search queries
+        based on a single input question.
+        Generate 3 related search queries for the following question:
+        {question}"""
+        self.prompt_gen_queries = ChatPromptTemplate.from_template(template_queries)
+
+        # Prompt for final answer generation
+        template_answer = """You are a helpful assistant. Answer the question based on the following context
+        If you are unsure of the answer, reply I don't know. 
+        Context:
+        {context}
+
+        Question: {question}
+
+        """
+        self.prompt_answer = ChatPromptTemplate.from_template(template_answer)
+
+    def generate_queries(self, question: str) -> List[str]:
+        """Generate multiple related queries for RAG-Fusion."""
+        response = self.llm.invoke(
+            self.prompt_gen_queries.format_prompt(question=question).to_messages()
+        )
+        
+        # Extract the text content from AIMessage
+        text = response.content  # <- this is now a string
+        
+        # Split into individual queries
+        queries = [q.strip() for q in text.split("\n") if q.strip()]
+        return queries
+
+    @staticmethod
+    def reciprocal_rank_fusion(results: List[List[Document]], k: int = 60) -> List[Document]:
+        """Fuse multiple ranked lists using Reciprocal Rank Fusion (RRF)."""
+        fused_scores = {}
+        for docs in results:
+            for rank, doc in enumerate(docs):
+                doc_str = dumps(doc)
+                fused_scores[doc_str] = fused_scores.get(doc_str, 0) + 1 / (rank + k)
+
+        reranked = [(loads(doc), score) for doc, score in sorted(fused_scores.items(), key=lambda x: x[1], reverse=True)]
+        return [doc for doc, _ in reranked]
+
+    def retrieve(self, question: str, k_per_query: int = 4) -> List[Document]:
+        """Run RAG-Fusion retrieval for a given question."""
+        queries = self.generate_queries(question)
+        all_results = []
+        for q in queries:
+            results = self.rag.query(q, k=k_per_query)
+            all_results.append(results)
+        return self.reciprocal_rank_fusion(all_results)
+
+    def answer(self, question: str, k_per_query: int = 4, top_k_docs: int = 5) -> str:
+        """
+        Retrieve RRF-fused documents and produce a final answer.
+        - Uses only top_k_docs documents for context.
+        - Does NOT truncate any text.
+        """
+        # Step 1: Retrieve RRF-fused documents
+        docs = self.retrieve(question, k_per_query=k_per_query)
+
+        # Step 2: Take only top_k_docs documents
+        docs_to_use = docs[:top_k_docs]
+
+        # Step 3: Combine all top documents into context
+        context = "\n\n".join([doc.page_content for doc in docs_to_use])
+
+        # Step 4: Generate final answer
+        response = self.llm.invoke(
+            self.prompt_answer.format_prompt(context=context, question=question).to_messages()
+        )
+        return StrOutputParser().parse(response)
+
