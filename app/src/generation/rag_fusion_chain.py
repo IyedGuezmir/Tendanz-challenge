@@ -23,14 +23,12 @@ class RAGFusionChain:
         self.rag = rag
         self.llm = ChatOpenAI(model_name=llm_model, temperature=temp)
 
-        # Prompt to generate multiple related queries
         template_queries = """You are a helpful assistant that generates multiple search queries
         based on a single input question.
         Generate 3 related search queries for the following question:
         {question}"""
         self.prompt_gen_queries = ChatPromptTemplate.from_template(template_queries)
 
-        # Prompt for final answer generation
         template_answer = """You are a helpful assistant. Answer the question based on the following context
         If you are unsure of the answer, reply I don't know. 
         Context:
@@ -48,7 +46,7 @@ class RAGFusionChain:
         )
         
         # Extract the text content from AIMessage
-        text = response.content  # <- this is now a string
+        text = response.content  
         
         # Split into individual queries
         queries = [q.strip() for q in text.split("\n") if q.strip()]
@@ -81,18 +79,15 @@ class RAGFusionChain:
         - Uses only top_k_docs documents for context.
         - Does NOT truncate any text.
         """
-        # Step 1: Retrieve RRF-fused documents
         docs = self.retrieve(question, k_per_query=k_per_query)
 
-        # Step 2: Take only top_k_docs documents
         docs_to_use = docs[:top_k_docs]
 
-        # Step 3: Combine all top documents into context
         context = "\n\n".join([doc.page_content for doc in docs_to_use])
 
-        # Step 4: Generate final answer
         response = self.llm.invoke(
             self.prompt_answer.format_prompt(context=context, question=question).to_messages()
         )
-        return StrOutputParser().parse(response)
+        text = response.content  
+        return StrOutputParser().parse(text)
 
