@@ -6,3 +6,4 @@ langchain-qdrant
 fastembed
 docling
 cohere==5.20.1
+ragas
