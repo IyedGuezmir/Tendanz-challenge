@@ -69,7 +69,7 @@ def get_chunks_using_markers(src_text: str) -> list[str]:
     return chunks
 
 
-def split_chunk_with_langchain(chunk: str, chunk_size: int = 5000, chunk_overlap: int = 200) -> list[str]:
+def split_chunk_with_langchain(chunk: str, chunk_size: int = 3000, chunk_overlap: int = 200) -> list[str]:
     """
     Split chunk while keeping tables and their explanations together.
     Only split at subheadings or if chunk is very large.
