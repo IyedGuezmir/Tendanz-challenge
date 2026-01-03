@@ -9,7 +9,7 @@ class CohereReranker:
         self.client = cohere.ClientV2()
         
 
-    def rerank(self, query: str, documents: List[Document], top_k: int = 4) -> List[Document]:
+    def rerank(self, query: str, documents: List[Document], top_k: int = 6) -> List[Document]:
         """
         documents: list of Document objects with 'page_content'
         Returns: reranked list of documents
