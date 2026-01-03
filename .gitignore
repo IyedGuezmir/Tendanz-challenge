@@ -43,11 +43,10 @@ tendanz_env/
 
 # Jupyter Notebook
 .ipynb_checkpoints
-*.ipynb
+
 
 # Data files
-app/data/pdfs/*.pdf
-app/data/parsed/*.md
+
 
 # Logs
 *.log
