@@ -112,7 +112,6 @@ We experimented with **three different RAG-based architectures**:
 ![Hybrid with Rag Fusion](Architecture/Hybrid_Fusion.png)
 
 - **Hybrid Retrieval:** Combines **BM25 keyword search** with **OpenAI embeddings** to handle both lexical and semantic matching.
-- **Recursive Character Splitting:** Ensures that chunk size is manageable for embeddings and LLM context windows while preserving context overlap.
 - **RAG-Fusion:** Uses **Reciprocal Rank Fusion** to merge multiple retrieval results, improving ranking consistency and reducing noise.
 
 ---
