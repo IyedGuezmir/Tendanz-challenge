@@ -7,3 +7,4 @@ fastembed
 docling
 cohere==5.20.1
 ragas
+streamlit ==1.52.2
