@@ -4,7 +4,7 @@ from .hybrid_rag import HybridRAG
 from .cohere_reranker import CohereReranker
 load_dotenv()
 
-DEFAULT_COLLECTION = "my_documents4"
+DEFAULT_COLLECTION = "my_documents"
 
 rag = HybridRAG(
     collection_name=DEFAULT_COLLECTION,

@@ -21,8 +21,8 @@ class HybridRAG:
 
     def __init__(
         self,
-        collection_name: str = "my_documents4",
-        chunk_size: int = 5000,
+        collection_name: str = "my_documents",
+        chunk_size: int = 3000,
         chunk_overlap: int = 200,
         client_url: str = None,
         api_key: str = None,
