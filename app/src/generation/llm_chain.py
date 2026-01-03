@@ -22,8 +22,8 @@ class LLMChain:
         reranker: Optional[CohereReranker] = None,
         model: str = "gpt-4o-mini",
         temperature: float = 0.0,
-        retrieve_k: int = 8,
-        final_k: int = 4,
+        retrieve_k: int = 12,
+        final_k: int = 6,
     ):
         self.rag = rag
         self.reranker = reranker
@@ -37,15 +37,14 @@ class LLMChain:
 
         self.prompt = ChatPromptTemplate.from_template(
             """
-Use only the context below to answer the question.
-If the answer is not contained in the context, say You don't know.
+        You are a helpful assistant. Answer the question based on the following context
+        If you are unsure of the answer, reply I don't know. 
+        Context:
+        {context}
 
-Context:
-{context}
-
-Question:
-{question}
-"""
+        Question:
+        {question}
+        """
         )
 
         self.chain = self.prompt | self.llm | StrOutputParser()
