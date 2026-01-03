@@ -22,7 +22,8 @@ Tendanz-challenge/
 │   │   │   └── cg-auto-test-parsed/
 │   │   ├── pdfs/
 │   │   │   └── cg-auto-test.pdf
-│   │   └── qa_dict.csv
+│   │   └── eval
+│   │       └── qa_dict.csv
 │   ├── notebooks/
 │   │   └── chunking.ipynb
 │   ├── src/
