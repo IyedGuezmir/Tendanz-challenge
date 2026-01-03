@@ -1,0 +1,7 @@
+LANGSMITH_API_KEY=""
+OPENAI_API_KEY=""
+QDRANT_API_KEY=""
+QDRANT_URL=""
+COHERE_API_KEY="Not needed in our final design but can be useful"
+LANGCHAIN_TRACING_V2=true
+LANGCHAIN_TRACING_PROJECT="tendanz-challenge"
