@@ -14,7 +14,49 @@ Key features:
 ---
 
 ## Project Structure
-````
+```` 
+Tendanz-challenge/
+├── app/
+│   ├── data/
+│   │   ├── parsed/
+│   │   │   └── cg-auto-test-parsed/
+│   │   ├── pdfs/
+│   │   │   └── cg-auto-test.pdf
+│   │   └── qa_dict.csv
+│   ├── notebooks/
+│   │   └── chunking.ipynb
+│   ├── src/
+│   │   ├── evaluation/
+│   │   │   ├── __init__.py
+│   │   │   ├── context_precision.py
+│   │   │   └── faithfulness.py
+│   │   ├── generation/
+│   │   │   ├── __init__.py
+│   │   │   ├── llm_chain_default.py
+│   │   │   ├── llm_chain.py
+│   │   │   └── rag_fusion_chain.py
+│   │   ├── loader/
+│   │   │   ├── __init__.py
+│   │   │   └── load_chunks.py
+│   │   └── retrieval/
+│   │       ├── __init__.py
+│   │       ├── cohere_rerank.py
+│   │       └── hybrid_rag.py
+│   ├── test/
+│   │   └── eval.py
+│   └── utils/
+│       ├── __init__.py
+│       └── helpers.py
+├── Architecture/
+│   ├── Hybrid_Fusion.png
+│   ├── rag_decomp.png
+│   └── rag_fusion.png
+├── .env
+├── .gitignore
+├── main.py
+├── README.md
+├── requirements.txt
+└── streamlit_app.py
 ````
 
 ---
@@ -47,7 +89,7 @@ We experimented with **three different RAG-based architectures**:
 ---
 
 ### 2. Hybrid with Query Decomposition
-![Hybrid with Query Decomposition](Architecture/rag_decomp.png)
+![Query Decomposition](Architecture/rag_decomp.png)
 - **Pipeline:** `Query → Decompose → Hybrid Retrieval → LLM`  
 - **Mechanism:** Break complex questions into sub-queries to retrieve relevant sections individually.  
 - **Reasoning:** Legal queries often contain multiple clauses or conditions; decomposition improves **retrieval precision**.  
@@ -57,7 +99,7 @@ We experimented with **three different RAG-based architectures**:
 ---
 
 ### 3. Hybrid with RAG-Fusion
-![Hybrid with Rag Fusion](/Architecture/rag_fusion.png)
+![Rag Fusion](/Architecture/rag_fusion.png)
 - **Pipeline:** `Query → Generate related queries → Hybrid retrieval for each → Reciprocal Rank Fusion → LLM answer`  
 - **Mechanism:** Multiple queries are generated automatically from the user question. Each query retrieves top-k documents, which are then **fused using Reciprocal Rank Fusion (RRF)** to rank the most relevant pieces.  
 - **Reasoning:** Combining multiple perspectives increases **answer faithfulness and contextual richness**.  
@@ -66,11 +108,11 @@ We experimented with **three different RAG-based architectures**:
 
 ---
 
-## Design Decisions
+## Final Design Decision
+![Hybrid with Rag Fusion](Architecture/Hybrid_Fusion.png)
 
 - **Hybrid Retrieval:** Combines **BM25 keyword search** with **OpenAI embeddings** to handle both lexical and semantic matching.
 - **Recursive Character Splitting:** Ensures that chunk size is manageable for embeddings and LLM context windows while preserving context overlap.
-- **Query Decomposition:** Splits complex questions to improve retrieval accuracy in multi-condition queries.
 - **RAG-Fusion:** Uses **Reciprocal Rank Fusion** to merge multiple retrieval results, improving ranking consistency and reducing noise.
 
 ---
