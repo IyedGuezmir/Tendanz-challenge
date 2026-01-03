@@ -21,7 +21,7 @@ class RAGFusionChain:
 
     def __init__(self, rag: HybridRAG, llm_model: str = "gpt-4o-mini", temp: float = 0.0):
         self.rag = rag
-        self.llm = ChatOpenAI(model_name=llm_model, temperature=temp)
+        self.llm = ChatOpenAI(model_name=llm_model, temperature=temp, streaming=True)
 
         template_queries = """ 
         You are a legal information retrieval assistant.
