@@ -32,7 +32,7 @@ Tendanz-challenge/
 │   │   │   └── faithfulness.py
 │   │   ├── generation/
 │   │   │   ├── __init__.py
-│   │   │   ├── llm_chain_default.py
+│   │   │   ├── llm_chain_decomp.py
 │   │   │   ├── llm_chain.py
 │   │   │   └── rag_fusion_chain.py
 │   │   ├── loader/
