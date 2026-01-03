@@ -47,7 +47,7 @@ We experimented with **three different RAG-based architectures**:
 ---
 
 ### 2. Hybrid with Query Decomposition
-Architecture/rag_decomp.png
+![Hybrid with Query Decomposition](Architecture/rag_decomp.png)
 - **Pipeline:** `Query → Decompose → Hybrid Retrieval → LLM`  
 - **Mechanism:** Break complex questions into sub-queries to retrieve relevant sections individually.  
 - **Reasoning:** Legal queries often contain multiple clauses or conditions; decomposition improves **retrieval precision**.  
@@ -57,7 +57,7 @@ Architecture/rag_decomp.png
 ---
 
 ### 3. Hybrid with RAG-Fusion
-![alt text](rag_fusion.png)
+![Hybrid with Rag Fusion](/Architecture/rag_fusion.png)
 - **Pipeline:** `Query → Generate related queries → Hybrid retrieval for each → Reciprocal Rank Fusion → LLM answer`  
 - **Mechanism:** Multiple queries are generated automatically from the user question. Each query retrieves top-k documents, which are then **fused using Reciprocal Rank Fusion (RRF)** to rank the most relevant pieces.  
 - **Reasoning:** Combining multiple perspectives increases **answer faithfulness and contextual richness**.  

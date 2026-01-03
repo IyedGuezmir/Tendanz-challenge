@@ -12,9 +12,9 @@ class StreamlitCallback(BaseCallbackHandler):
         self.container.markdown(self.text)
 
 # --- PAGE CONFIG ---
-st.set_page_config(page_title="Tendanz RAGFusion Chatbot", page_icon="🤖", layout="wide")
-st.markdown("## Tendanz RAGFusion Chatbot")
-st.markdown("Ask legal questions and get answers from your RAG-Fusion LLM")
+st.set_page_config(page_title="Tendanz Insurance Chatbot", page_icon="🤖", layout="wide")
+st.markdown("## Tendanz Insurance Chatbot")
+st.markdown("Ask legal questions and get fast and accurate answers based on Auto MMA insurance policy documents.")
 
 user_question = st.text_area("Enter your question:", placeholder="Type your legal question here...")
 if st.button("Ask"):
