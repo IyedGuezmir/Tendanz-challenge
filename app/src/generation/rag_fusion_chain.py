@@ -23,10 +23,25 @@ class RAGFusionChain:
         self.rag = rag
         self.llm = ChatOpenAI(model_name=llm_model, temperature=temp)
 
-        template_queries = """You are a helpful assistant that generates multiple search queries
-        based on a single input question.
-        Generate 3 related search queries for the following question:
+        template_queries = """ 
+        You are a legal information retrieval assistant.
+        Your task is to generate multiple search queries that retrieve legal texts
+        relevant to the same legal question.
+
+        Rules:
+        - Preserve the original legal meaning exactly
+        - Do NOT change legal scope or assumptions
+        - Do NOT introduce new legal concepts
+        - Do NOT ask hypothetical or advisory questions
+        - Use formal legal language
+
+        Return the original question followed by 2 more generated search queries.
+
+        
+        Original Question:
         {question}"""
+        
+        
         self.prompt_gen_queries = ChatPromptTemplate.from_template(template_queries)
 
         template_answer = """You are a helpful assistant. Answer the question based on the following context
@@ -50,6 +65,7 @@ class RAGFusionChain:
         
         # Split into individual queries
         queries = [q.strip() for q in text.split("\n") if q.strip()]
+        print(queries)
         return queries
 
     @staticmethod
@@ -64,7 +80,7 @@ class RAGFusionChain:
         reranked = [(loads(doc), score) for doc, score in sorted(fused_scores.items(), key=lambda x: x[1], reverse=True)]
         return [doc for doc, _ in reranked]
 
-    def retrieve(self, question: str, k_per_query: int = 4) -> List[Document]:
+    def retrieve(self, question: str, k_per_query: int = 5) -> List[Document]:
         """Run RAG-Fusion retrieval for a given question."""
         queries = self.generate_queries(question)
         all_results = []
@@ -73,7 +89,7 @@ class RAGFusionChain:
             all_results.append(results)
         return self.reciprocal_rank_fusion(all_results)
 
-    def answer(self, question: str, k_per_query: int = 4, top_k_docs: int = 5) -> str:
+    def answer(self, question: str, k_per_query: int = 5, top_k_docs: int = 6) -> str:
         """
         Retrieve RRF-fused documents and produce a final answer.
         - Uses only top_k_docs documents for context.
