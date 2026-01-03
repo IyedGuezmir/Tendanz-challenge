@@ -47,7 +47,7 @@ We experimented with **three different RAG-based architectures**:
 ---
 
 ### 2. Hybrid with Query Decomposition
-![alt text](rag_decomp.png)
+Architecture/rag_decomp.png
 - **Pipeline:** `Query → Decompose → Hybrid Retrieval → LLM`  
 - **Mechanism:** Break complex questions into sub-queries to retrieve relevant sections individually.  
 - **Reasoning:** Legal queries often contain multiple clauses or conditions; decomposition improves **retrieval precision**.  
